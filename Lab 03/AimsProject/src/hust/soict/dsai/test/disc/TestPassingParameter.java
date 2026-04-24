@@ -32,7 +32,9 @@ public class TestPassingParameter {
 		dvd = new DigitalVideoDisc(oldTitle);
 	}
 	
-	/*public static void swap(DigitalVideoDisc dvd1, DigitalVideoDisc dvd2) {
+	// This method correctly swaps 2 DigitalVideoDisc objects
+	// When we want to debug the swap method above (as in part 4), we can comment this method out.
+	public static void swap(DigitalVideoDisc dvd1, DigitalVideoDisc dvd2) {
 		String title1 = dvd1.getTitle();
 		String category1 = dvd1.getCategory();
 		String director1 = dvd1.getDirector();
@@ -49,5 +51,5 @@ public class TestPassingParameter {
 		dvd2.setDirector(director1);
 		dvd2.setLength(length1);
 		dvd2.setTitle(title1);
-	}*/
+	}
 }
