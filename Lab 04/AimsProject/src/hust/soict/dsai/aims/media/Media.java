@@ -67,7 +67,10 @@ public abstract class Media {
 		this.category = category;
 		this.cost = cost;
 	}
-
+	
+	public boolean isMatch(String targetTitle) {
+		return this.getTitle().equalsIgnoreCase(targetTitle);
+	}
 
 	public Media() {
 		// TODO Auto-generated constructor stub
