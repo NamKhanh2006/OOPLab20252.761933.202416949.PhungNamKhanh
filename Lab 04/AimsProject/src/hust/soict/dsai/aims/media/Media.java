@@ -96,6 +96,22 @@ public abstract class Media {
 		return this.getTitle().equalsIgnoreCase(targetTitle);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj) return true;
+	    
+	    if (obj == null || !(obj instanceof Media)) {
+	        return false;
+	    }
+	    
+	    Media other = (Media) obj;
+	    
+	    if (this.getTitle() == null) {
+	        return other.getTitle() == null;
+	    }
+	    return this.getTitle().equalsIgnoreCase(other.getTitle());
+	}
+	
 	public Media() {
 		// TODO Auto-generated constructor stub
 		nbMediaItems++;
