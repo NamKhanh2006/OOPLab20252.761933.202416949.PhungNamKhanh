@@ -7,6 +7,8 @@ public abstract class Media {
 	private String category;
 	private float cost;
 	
+	private static int nbMediaItems = 0;
+	
 	public int getId() {
 		return id;
 	}
@@ -49,6 +51,24 @@ public abstract class Media {
 	public Media(String title) {
 		super();
 		this.title = title;
+		nbMediaItems++;
+		this.setId(nbMediaItems);
+	}
+	
+	public Media(String title, String category) {
+		super();
+		this.title = title;
+		this.category = category;
+		nbMediaItems++;
+		this.setId(nbMediaItems);
+	}
+	
+	public Media(String title, float cost) {
+		super();
+		this.title = title;
+		this.cost = cost;
+		nbMediaItems++;
+		this.setId(nbMediaItems);
 	}
 
 
@@ -57,16 +77,20 @@ public abstract class Media {
 		this.title = title;
 		this.category = category;
 		this.cost = cost;
+		nbMediaItems++;
+		this.setId(nbMediaItems);
 	}
 
-
-	public Media(int id, String title, String category, float cost) {
+	/*
+	public Media(String title, String category, float cost) {
 		super();
-		this.id = id;
 		this.title = title;
 		this.category = category;
 		this.cost = cost;
+		nbMediaItems++;
+		this.setId(nbMediaItems);
 	}
+	*/
 	
 	public boolean isMatch(String targetTitle) {
 		return this.getTitle().equalsIgnoreCase(targetTitle);
@@ -74,6 +98,8 @@ public abstract class Media {
 
 	public Media() {
 		// TODO Auto-generated constructor stub
+		nbMediaItems++;
+		this.setId(nbMediaItems);
 	}
 
 }
