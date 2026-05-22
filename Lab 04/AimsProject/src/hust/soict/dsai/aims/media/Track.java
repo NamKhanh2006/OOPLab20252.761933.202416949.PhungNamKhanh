@@ -57,6 +57,10 @@ public class Track implements Playable{
 	    return titleMatch && lengthMatch;
 	}
 
+	public String toString() {
+		return title + " - " + length;
+	}
+	
 	public Track() {
 		// TODO Auto-generated constructor stub
 	}

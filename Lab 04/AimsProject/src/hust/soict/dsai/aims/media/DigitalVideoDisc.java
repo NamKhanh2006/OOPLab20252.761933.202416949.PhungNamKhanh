@@ -14,6 +14,7 @@ public class DigitalVideoDisc extends Disc implements Playable {
 	public int getLength() {
 		return length;
 	}
+	
 	public void setDirector(String director) {
 		this.director = director;
 	}

@@ -41,4 +41,24 @@ public class Store {
 		}
 	}
 	
+	public void print() {
+    	System.out.println("***********************STORE***********************");
+    	System.out.println("Items In Store:");
+    	for (Media m : itemsInStore) {
+    		System.out.println(m.toString());
+    	}
+    	System.out.println("***************************************************");
+    }
+    
+	public Media searchByTitle(String targetMediaTitle) {
+		if (itemsInStore.size() > 0) {
+			for (Media m : itemsInStore) {
+				if (m.getTitle().equalsIgnoreCase(targetMediaTitle))
+					return m;
+			}
+			return null;
+		}
+		else
+			return null;
+	}
 }

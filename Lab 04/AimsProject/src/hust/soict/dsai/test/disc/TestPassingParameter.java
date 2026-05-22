@@ -11,10 +11,10 @@ public class TestPassingParameter {
 		swap(jungleDVD, cinderellaDVD);
 		System.out.println("jungle dvd title: " + jungleDVD.getTitle());
 		// Code to test the id attribute
-		System.out.println("jungle dvd id: " + jungleDVD.getid());
+		System.out.println("jungle dvd id: " + jungleDVD.getId());
 		System.out.println("cinderella dvd title: " + cinderellaDVD.getTitle());
 		// Code to test the id attribute
-		System.out.println("cinderella dvd id: " + cinderellaDVD.getid());
+		System.out.println("cinderella dvd id: " + cinderellaDVD.getId());
 		
 		changeTitle(jungleDVD, cinderellaDVD.getTitle());
 		System.out.println("jungle dvd title: " + jungleDVD.getTitle());
