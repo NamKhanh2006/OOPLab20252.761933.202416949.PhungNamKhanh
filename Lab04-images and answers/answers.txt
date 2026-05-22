@@ -1,0 +1,74 @@
+Question: (Part 9 - Constructors of whole classes and parent classes)
+Which classes are aggregates of other classes? Checking all constructors of whole classes if they initialize for their parts?
+Answer:
+In the Lab 04 project, there are two primary classes that act as "wholes" (aggregates) containing other "parts."
+1. The Cart class (Aggregate of Media)
+The Cart is the most obvious aggregate. It represents a collection of items that the customer wants to buy.
+The "Part": Media (and its subclasses: Book, DigitalVideoDisc, CompactDisc).
+2. The CompactDisc class (Aggregate of Track)
+A CompactDisc is a "whole" that consists of multiple Track objects.
+The "Part": Track.
+
+Question: (Part 10 - Unique item in a list)
+If the passing object is not an instance of Media, what happens?
+If we try to cast an object that is not a Media (or a subclass of Media) using (Media) obj, Java will throw a ClassCastException, which will crash our program. This is why we use the instanceof check before casting. If obj instanceof Media is false, the method returns false safely. This is the correct behavior because a Media object can never be "equal" to a String or a Scanner.
+
+Q: How does this help with contains()?
+A: ArrayList.contains(o) internally loops through the list and calls o.equals(element).
+Before overriding: contains() used the version of equals() from the Object class, which only returns true if they are the exact same object in memory (o == element).
+After overriding: contains() now uses our logic. Even if we create a brand new DigitalVideoDisc object with the title "The Lion King," contains() will return true if there is already a DVD with that same title in our cart.
+
+Question: (Part 11 - Polymorphism with toString() method)
+Create an ArrayList of Media, then add some media (CD, DVD or Book) into the list. Iterate through the list and print out the information of the media by using toString() method. Observe what happens and explain in detail.
+Answer:
+When we run the loop, the output will not look the same for every item. Even though the variable m is declared as a Media type, the console will show the specific formatting we defined in the DigitalVideoDisc.toString(), CompactDisc.toString(), and Book.toString() methods.
+Explanation:
+All these classes (Book, DVD, CD) inherit from the common base class Media.
+Each subclass provides its own specific implementation of the toString() method.
+When we add a DVD or Book to a List<Media>, we are upcasting. The list treats them all as generic Media.
+At runtime, when m.toString() is called, the Java Virtual Machine (JVM) doesn't just look at the reference type (Media). It checks the actual object type (the "class of the object" in memory). If the object is a Book, it calls the Book version of toString().
+Note: If the toString() implementations of CompactDisc and Book haven't been written yet, the output might just show the default memory address from the Object class.
+
+Question (Part 12 - Sort media in the cart):
+Alternatively, to compare items in the cart, instead of using Comparator, we can use the 
+Comparable interface and override the compareTo()method. You can refer to the Java docs to see the 
+information of this interface.  
+Suppose we are taking this Comparable interface approach.
+- What class should implement the Comparable interface?
+- In those classes, how should you implement the compareTo()method be to reflect the ordering that we want?
+- Can we have two ordering rules of the item (by title then cost and by cost then title) if we use this 
+Comparable interface approach?
+- Suppose the DVDs has a different ordering rule from the other media types, that is by title, then decreasing 
+length, then cost. How would you modify your code to allow this? 
+Answer:
+- The Media class itself should implement Comparable<Media>. Since all our specific media types (Book, CD, DVD) inherit from Media, they would all then be "Comparable" and can be stored in a sorted collection.
+- We would define one "natural" ordering. For example, if we want the default to be by Title then Cost:
+@Override
+public int compareTo(Media other) {
+    int titleCompare = this.getTitle().compareToIgnoreCase(other.getTitle());
+    if (titleCompare != 0) return titleCompare;
+    return Float.compare(other.getCost(), this.getCost());
+}
+- No. The Comparable interface is used to define the Natural Ordering of an object. A class can only have one compareTo() method. If we need multiple, different sorting rules (like switching between Title-sort and Cost-sort in a UI), we must use Comparator.
+- We would create a specific Comparator<Media> (e.g., DVDComparator) and use the instanceof operator or specialized logic.
+public class DVDComparator implements Comparator<Media> {
+    @Override
+    public int compare(Media m1, Media m2) {
+        // If both are DVDs, apply the special rule
+        if (m1 instanceof DigitalVideoDisc && m2 instanceof DigitalVideoDisc) {
+            DigitalVideoDisc d1 = (DigitalVideoDisc) m1;
+            DigitalVideoDisc d2 = (DigitalVideoDisc) m2;
+            
+            int titleDiff = d1.getTitle().compareToIgnoreCase(d2.getTitle());
+            if (titleDiff != 0) return titleDiff;
+            
+            int lengthDiff = Integer.compare(d2.getLength(), d1.getLength()); // Decreasing length
+            if (lengthDiff != 0) return lengthDiff;
+            
+            return Float.compare(d1.getCost(), d2.getCost());
+        }
+        // Fallback to default Media sorting if they aren't both DVDs
+        return Media.COMPARE_BY_TITLE_COST.compare(m1, m2);
+    }
+}
+This approach keeps our code flexible—we can choose which "rulebook" to hand to Collections.sort() depending on what the user clicks in our menu.
