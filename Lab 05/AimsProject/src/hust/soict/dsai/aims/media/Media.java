@@ -100,21 +100,30 @@ public abstract class Media {
 	public boolean isMatch(String targetTitle) {
 		return this.getTitle().equalsIgnoreCase(targetTitle);
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
-	    if (this == obj) return true;
-	    
+	    // 1. Kiểm tra nếu so sánh chính nó với chính nó (Cùng ô nhớ) -> Bằng nhau luôn
+	    if (this == obj) {
+	        return true;
+	    }
+
+	    // 2. Kiểm tra phòng thủ tránh lỗi NullPointerException và ClassCastException
+	    // Nếu đối tượng truyền vào bị rỗng hoặc KHÔNG PHẢI là một thực thể thuộc kiểu Media
 	    if (obj == null || !(obj instanceof Media)) {
-	        return false;
+	        return false; // Trả về false luôn chứ không ép kiểu bừa bãi gây sập app
 	    }
-	    
+
+	    // 3. Ép kiểu an toàn (Safe Casting) vì ta đã chắc chắn nó là Media nhờ bước trên
 	    Media other = (Media) obj;
-	    
-	    if (this.getTitle() == null) {
-	        return other.getTitle() == null;
+
+	    // 4. Kiểm tra thuộc tính Title để quyết định tính bằng nhau theo yêu cầu đề bài
+	    if (this.title == null) {
+	        return other.title == null; 
 	    }
-	    return this.getTitle().equalsIgnoreCase(other.getTitle());
+	    
+	    // So sánh không phân biệt chữ hoa chữ thường bằng equalsIgnoreCase (hoặc .equals() tùy bạn)
+	    return this.title.equalsIgnoreCase(other.title);
 	}
 	
 	public Media() {

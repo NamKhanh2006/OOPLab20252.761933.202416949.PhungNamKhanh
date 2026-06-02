@@ -323,13 +323,15 @@ public class Aims {
 
 package hust.soict.dsai.aims;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
 
 import hust.soict.dsai.aims.cart.Cart;
-import hust.soict.dsai.aims.media.*;
-import hust.soict.dsai.aims.store.*;
-import java.util.Scanner;
+import hust.soict.dsai.aims.media.Book;
+import hust.soict.dsai.aims.media.CompactDisc;
+import hust.soict.dsai.aims.media.DigitalVideoDisc;
+import hust.soict.dsai.aims.media.Media;
+import hust.soict.dsai.aims.media.Track;
+import hust.soict.dsai.aims.store.Store;
 
 public class Aims {
     public static void main(String[] args) {
@@ -573,7 +575,13 @@ public class Aims {
         	reader.nextLine(); // Clear buffer
         	
     		if (mediaDetailsMenuChoice == 1) {
-    			cart.addMedia(targetMedia);
+    			try {
+    				cart.addMedia(targetMedia);
+    			} catch (hust.soict.dsai.aims.exception.LimitExceededException e) {
+    				System.err.println("[Cart Error] " + e.getMessage());
+    	            // Hiển thị dialog cảnh báo trực quan cho người dùng console luôn
+    	            javax.swing.JOptionPane.showMessageDialog(null, e.getMessage(), "Cart Limit Exceeded", javax.swing.JOptionPane.ERROR_MESSAGE);
+    			}
     			if (targetMedia instanceof DigitalVideoDisc) {
     				System.out.println("Number of DVDs in cart: " + cart.countDVD());
     			}
@@ -593,35 +601,59 @@ public class Aims {
     }
     
     public static void playMedia(Media m) {
-    	if (m instanceof CompactDisc) {
-			CompactDisc cd = (CompactDisc) m;
-			cd.play();
-		}
-		else if (m instanceof DigitalVideoDisc) {
-			DigitalVideoDisc dvd = (DigitalVideoDisc) m;
-			dvd.play();
-		}
-		else {
-			System.out.println("The media '" + m.getTitle() + "' cannot be played.");
-		}
+        // Bọc toàn bộ logic kiểm tra và phát Media vào khối try-catch để bắt PlayerException
+        try {
+            if (m instanceof CompactDisc) {
+                CompactDisc cd = (CompactDisc) m;
+                cd.play();
+            }
+            else if (m instanceof DigitalVideoDisc) {
+                DigitalVideoDisc dvd = (DigitalVideoDisc) m;
+                dvd.play();
+            }
+            else {
+                System.out.println("The media '" + m.getTitle() + "' cannot be played.");
+            }
+        } catch (hust.soict.dsai.aims.exception.PlayerException e) {
+            // 1. In toàn bộ 3 thông tin ngoại lệ ra Console theo đúng yêu cầu mục 14
+            System.err.println("\n[Console] Exception Message: " + e.getMessage());
+            System.err.println("[Console] Exception toString(): " + e.toString());
+            System.err.println("[Console] Print Stack Trace:");
+            e.printStackTrace(); // In vết lỗi stack trace hệ thống
+            
+            // 2. Hiển thị hộp thoại Swing Dialog Pop-up giống hệt mẫu Hình 49 của thầy cô
+            javax.swing.JOptionPane.showMessageDialog(
+                null, 
+                e.getMessage(),               // Nội dung thông báo (Ví dụ: ERROR: DVD length is non-positive!)
+                "Illegal Property Value",     // Tiêu đề của hộp thoại (Khớp với hình mẫu)
+                javax.swing.JOptionPane.ERROR_MESSAGE // Icon dấu X đỏ cảnh báo nguy hiểm
+            );
+        }
     }
     
     public static void addMediaToCart(Store store, Cart cart, Scanner reader) {
-    	String targetMediaTitle;
-    	System.out.println("Please enter the media title: ");
-    	Media targetMedia;
-    	while (true) {
-    		targetMediaTitle = reader.nextLine();
-    		targetMedia = store.searchByTitle(targetMediaTitle); 
-    		if (targetMedia == null)
-    			System.out.println("No results found. Please try again.");
-    		else
-    			break;
-    	}
-    	cart.addMedia(targetMedia);
-		if (targetMedia instanceof DigitalVideoDisc) {
-			System.out.println("Number of DVDs in current cart: " + cart.countDVD());
-		}
+        String targetMediaTitle;
+        System.out.println("Please enter the media title: ");
+        Media targetMedia;
+        while (true) {
+            targetMediaTitle = reader.nextLine();
+            targetMedia = store.searchByTitle(targetMediaTitle); 
+            if (targetMedia == null)
+                System.out.println("No results found. Please try again.");
+            else
+                break;
+        }
+        // SỬA TẠI ĐÂY: Bọc try-catch khi addMedia vào giỏ hàng
+        try {
+            cart.addMedia(targetMedia);
+            if (targetMedia instanceof DigitalVideoDisc) {
+                System.out.println("Number of DVDs in current cart: " + cart.countDVD());
+            }
+        } catch (hust.soict.dsai.aims.exception.LimitExceededException e) {
+            System.err.println("[Cart Error] " + e.getMessage());
+            // Hiển thị dialog cảnh báo trực quan cho người dùng console luôn
+            javax.swing.JOptionPane.showMessageDialog(null, e.getMessage(), "Cart Limit Exceeded", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     public static void playAMedia(Store store, Scanner reader) {
@@ -638,4 +670,6 @@ public class Aims {
     	}
     	playMedia(targetMedia);
     }
+    
+    
 }

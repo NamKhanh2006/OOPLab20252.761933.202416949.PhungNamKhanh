@@ -88,11 +88,9 @@ public class CartScreenController {
 package hust.soict.dsai.aims.screen;
 
 import hust.soict.dsai.aims.cart.Cart;
-import hust.soict.dsai.aims.media.CompactDisc;
-import hust.soict.dsai.aims.media.DigitalVideoDisc;
+import hust.soict.dsai.aims.exception.PlayerException;
 import hust.soict.dsai.aims.media.Media;
 import hust.soict.dsai.aims.media.Playable;
-import hust.soict.dsai.aims.media.Track;
 import hust.soict.dsai.aims.store.Store;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -254,83 +252,32 @@ public class CartScreenController {
         tblMedia.getSelectionModel().clearSelection();
     }
     
+ 
     @FXML
     void btnPlayPressed(ActionEvent event) {
-        // 1. Get the selected item from the table selection model
-        Media media = tblMedia.getSelectionModel().getSelectedItem();
-        
-        // Safety check: make sure something is selected and it is actually Playable
-        if (media == null || !(media instanceof Playable)) {
-            return;
-        }
-        
-        StringBuilder playMessage = new StringBuilder();
-        boolean canPlay = true;
-
-        // 2. Handle DVD Playback Logic & Validation
-        if (media instanceof DigitalVideoDisc) {
-            DigitalVideoDisc dvd = (DigitalVideoDisc) media;
-            if (dvd.getLength() <= 0) {
-                canPlay = false;
-                playMessage.append("ERROR: The DVD '").append(dvd.getTitle())
-                           .append("' cannot be played because its length is ")
-                           .append(dvd.getLength()).append(" or less.");
-            } else {
-                playMessage.append("Playing DVD: ").append(dvd.getTitle()).append("\n")
-                           .append("DVD Length: ").append(dvd.getLength()).append(" mins");
-            }
-        } 
-        // 3. Handle CD Playback Logic & Validation (including internal Track verification)
-        else if (media instanceof CompactDisc) {
-            CompactDisc cd = (CompactDisc) media;
+    	Media selectedMedia = tblMedia.getSelectionModel().getSelectedItem();
+    	if (selectedMedia != null && selectedMedia instanceof Playable) {
+    		try {
+            // Ép kiểu sang Playable và thực thi phát media
+            ((Playable) selectedMedia).play();
             
-            // Check if the overall CD length is invalid
-            if (cd.getLength() <= 0) {
-                canPlay = false;
-                playMessage.append("ERROR: The CD '").append(cd.getTitle())
-                           .append("' cannot be played because its total length is ")
-                           .append(cd.getLength()).append(" or less.");
-            } else {
-                playMessage.append("Playing CD: ").append(cd.getTitle()).append("\n")
-                           .append("Artist: ").append(cd.getArtist()).append("\n")
-                           .append("Total Length: ").append(cd.getLength()).append(" mins\n")
-                           .append("--------------------------------------------------\n");
-                
-                // Loop through and display each individual track inside the CD
-                for (Track track : cd.getTracks()) {
-                    if (track.getLength() <= 0) {
-                        canPlay = false;
-                        // Reset the message to strictly show the specific failure rule required by the prompt
-                        playMessage.setLength(0); 
-                        playMessage.append("ERROR: Track '").append(track.getTitle())
-                                   .append("' has an invalid length (").append(track.getLength())
-                                   .append("). The parent CD '").append(cd.getTitle()).append("' cannot be played.");
-                        break; // Stop processing further tracks if one is broken
-                    } else {
-                        playMessage.append("  -> Playing Track: ").append(track.getTitle())
-                                   .append(" (Length: ").append(track.getLength()).append(" mins)\n");
-                    }
-                }
-            }
-        }
-
-        // 4. Present the results via clear Native JavaFX dialog popups
-        if (canPlay) {
-            // Successful Playback Dialog Box
+            // Nếu không dính ngoại lệ, hiển thị thông báo phát nhạc thành công bình thường
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Media Player Simulation");
-            alert.setHeaderText("Now Playing...");
-            alert.setContentText(playMessage.toString());
+            alert.setTitle("AIMS Media Player");
+            alert.setHeaderText("Media Streaming Started");
+            alert.setContentText("Now playing: " + selectedMedia.getTitle());
             alert.showAndWait();
-        } else {
-            // Failed Playback Validation Warning Box
+            
+        } catch (PlayerException e) {
+            // BẮT TRỌN LỖI PLAYEREXCEPTION VÀ HIỂN THỊ HỘP THOẠI ĐỎ CẢNH BÁO
             Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Playback Error");
-            alert.setHeaderText("Cannot Play Media");
-            alert.setContentText(playMessage.toString());
+            alert.setTitle("Playback System Error");
+            alert.setHeaderText("PlayerException Caught at Runtime!");
+            alert.setContentText(e.getMessage()); // Sẽ hiển thị chuỗi thông báo lỗi cụ thể
             alert.showAndWait();
         }
     }
+}
     
     private void updateTotalCost() {
         float total = 0;

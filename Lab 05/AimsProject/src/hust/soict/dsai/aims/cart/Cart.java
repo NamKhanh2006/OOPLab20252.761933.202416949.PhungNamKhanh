@@ -25,8 +25,8 @@ public class Cart {
         System.out.println("Cart sorted by cost.");
     }
     
-    public void addMedia(Media newMedia) {
-    	if (this.itemsOrdered.size() >= 20) {
+    public void addMedia(Media newMedia) throws LimitExceededException {
+    	if (this.itemsOrdered.size() >= MAX_NUMBERS_ORDERED) {
             throw new LimitExceededException("ERROR: The cart is full! Cannot add: " + newMedia.getTitle());
         }
     	

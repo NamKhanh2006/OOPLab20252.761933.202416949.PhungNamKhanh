@@ -59,24 +59,25 @@ public class MediaStore extends JPanel {
 
 package hust.soict.dsai.aims.screen;
 
-import hust.soict.dsai.aims.media.Media;
-import hust.soict.dsai.aims.media.Playable;
-import hust.soict.dsai.aims.cart.Cart; // Assuming you have a Cart class setup
-
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import javax.swing.BorderFactory;
+
+import hust.soict.dsai.aims.cart.Cart; // Assuming you have a Cart class setup
+import hust.soict.dsai.aims.media.Media;
+import hust.soict.dsai.aims.media.Playable;
 
 public class MediaStore extends JPanel {
     private Media media;
@@ -103,7 +104,9 @@ public class MediaStore extends JPanel {
         container.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         // 1. Add to Cart Button & Event Handling
+     
         JButton addToCartButton = new JButton("Add to cart");
+        /*
         addToCartButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -121,6 +124,25 @@ public class MediaStore extends JPanel {
                 cart.addMedia(media); 
                 System.out.println("[SYSTEM]: " + media.getTitle() + " has been added to your cart.");
                 System.out.println("Current Cart Size: " + cart.count());
+            }
+        });
+        */
+        addToCartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    // Gọi hàm addMedia (hàm này đã có throws LimitExceededException)
+                    cart.addMedia(media);
+                    
+                    JOptionPane.showMessageDialog(null, 
+                        "Added '" + media.getTitle() + "' to cart successfully!", 
+                        "Cart Updated", JOptionPane.INFORMATION_MESSAGE);
+                } catch (hust.soict.dsai.aims.exception.LimitExceededException ex) {
+                    // Bắt trọn lỗi vượt quá giới hạn giỏ hàng và hiển thị thông báo đỏ
+                    JOptionPane.showMessageDialog(null, 
+                        ex.getMessage(), 
+                        "Cart Limit Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         container.add(addToCartButton);

@@ -13,7 +13,7 @@ public abstract class AddItemToStoreScreen extends JFrame {
     protected Cart cart;
     protected JPanel centerPanel;
     
-    // Shared text fields across all media types
+    // Thuộc tính chung cho các màn hình nhập liệu
     protected JTextField tfId, tfTitle, tfCategory, tfCost;
 
     public AddItemToStoreScreen(Store store, Cart cart, String title) {
@@ -22,7 +22,8 @@ public abstract class AddItemToStoreScreen extends JFrame {
         
         this.setTitle(title);
         this.setSize(450, 500);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Closes just this popup, not the whole app
+        // Thay đổi sang DISPOSE để khi tắt cửa sổ nhập liệu thì không bị tắt toàn app
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
         this.setLayout(new BorderLayout());
         
         // Header Banner
@@ -34,51 +35,41 @@ public abstract class AddItemToStoreScreen extends JFrame {
         headerPanel.add(headerLabel);
         this.add(headerPanel, BorderLayout.NORTH);
         
-        // Dynamic Form Layout Grid
-        centerPanel = new JPanel(new GridLayout(0, 2, 10, 15));
+        // Lưới nhập dữ liệu trung tâm (Dùng GridLayout để các ô thẳng hàng)
+        centerPanel = new JPanel();
+        centerPanel.setLayout(new GridLayout(0, 2, 10, 10));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Add Base Common Fields
-        tfId = addFormField("ID:");
-        tfTitle = addFormField("Title:");
+        // Nạp các trường dữ liệu căn bản chung
+        tfId = addFormField("ID Item Product:");
+        tfTitle = addFormField("Media Title:");
         tfCategory = addFormField("Category:");
-        tfCost = addFormField("Cost ($):");
+        tfCost = addFormField("Price Cost ($):");
         
-        // Let subclasses append their custom fields
+        // Gọi hàm móc hook nạp thêm thuộc tính riêng của từng lớp con CD/DVD
         addCustomFields();
-        
         this.add(centerPanel, BorderLayout.CENTER);
         
-        // Bottom Action Button
-        JButton btnAdd = new JButton("Add Item to Store");
-        btnAdd.setFont(new Font("Arial", Font.BOLD, 14));
-        btnAdd.addActionListener(e -> {
-            try {
-                handleSubmit();
-                JOptionPane.showMessageDialog(this, "Successfully added to the inventory catalog!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                this.dispose(); // Close window on success
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Invalid number inputs! Please verify ID, Cost, or Length fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Execution Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        this.add(btnAdd, BorderLayout.SOUTH);
-        
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
-        
-     // Tạo MenuBar giống hệt StoreScreen cho màn hình Add Item
+        // Tạo thanh Menu Options điều hướng giống StoreScreen
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Options");
         JMenu smUpdateStore = new JMenu("Update Store");
-
+        
         JMenuItem addBookItem = new JMenuItem("Add Book");
-        addBookItem.addActionListener(e -> { new AddBookToStoreScreen(store, cart); this.dispose(); });
+        addBookItem.addActionListener(e -> { 
+            new AddBookToStoreScreen(store, cart); 
+            this.dispose(); 
+        });
         JMenuItem addCDItem = new JMenuItem("Add CD");
-        addCDItem.addActionListener(e -> { new AddCompactDiscToStoreScreen(store, cart); this.dispose(); });
+        addCDItem.addActionListener(e -> { 
+            new AddCompactDiscToStoreScreen(store, cart); 
+            this.dispose(); 
+        });
         JMenuItem addDVDItem = new JMenuItem("Add DVD");
-        addDVDItem.addActionListener(e -> { new AddDigitalVideoDiscToStoreScreen(store, cart); this.dispose(); });
+        addDVDItem.addActionListener(e -> { 
+            new AddDigitalVideoDiscToStoreScreen(store, cart); 
+            this.dispose(); 
+        });
 
         smUpdateStore.add(addBookItem);
         smUpdateStore.add(addCDItem);
@@ -87,7 +78,7 @@ public abstract class AddItemToStoreScreen extends JFrame {
 
         JMenuItem viewStoreItem = new JMenuItem("View store");
         viewStoreItem.addActionListener(e -> {
-            new StoreScreen(store, cart); // Quay lại màn hình Store chính
+            new StoreScreen(store, cart); 
             this.dispose();
         });
         menu.add(viewStoreItem);
@@ -100,7 +91,28 @@ public abstract class AddItemToStoreScreen extends JFrame {
         menu.add(viewCartItem);
 
         menuBar.add(menu);
-        this.setJMenuBar(menuBar); // Gắn menu vào JFrame hiện tại
+        this.setJMenuBar(menuBar);
+        
+        // Nút lưu dữ liệu xuống cuối màn hình
+        JButton btnAdd = new JButton("Add Item to Store");
+        btnAdd.setFont(new Font("Arial", Font.BOLD, 14));
+        btnAdd.addActionListener(e -> {
+            try {
+                handleSubmit();
+                JOptionPane.showMessageDialog(this, "Successfully added to the inventory catalog!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                // Sau khi thêm thành công, quay về màn hình Store chính để cập nhật hiển thị mẫu
+                new StoreScreen(store, cart);
+                this.dispose(); 
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid number inputs! Please verify ID, Cost, or Length fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Execution Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        this.add(btnAdd, BorderLayout.SOUTH);
+        
+        this.setLocationRelativeTo(null);
+        this.setVisible(true); // <--- Bật hiển thị cửa sổ lên màn hình
     }
 
     private JTextField addFormField(String labelText) {
@@ -112,9 +124,7 @@ public abstract class AddItemToStoreScreen extends JFrame {
         return textField;
     }
 
-    // Hook for unique subclass properties
     protected abstract void addCustomFields();
-
-    // Verification extraction execution block
     protected abstract void handleSubmit() throws Exception;
 }
+

@@ -1,5 +1,7 @@
 package hust.soict.dsai.aims.media;
 
+import hust.soict.dsai.aims.exception.PlayerException;
+
 public class DigitalVideoDisc extends Disc implements Playable {
 	//private static int nbDigitalVideoDiscs = 0;
 	private String director;
@@ -55,9 +57,21 @@ public class DigitalVideoDisc extends Disc implements Playable {
 	}
 	
 	@Override
+	/*
 	public void play() { 
 		System.out.println("Playing DVD: " + this.getTitle()); 
 		System.out.println("DVD length: " + this.getLength()); 
-	} 
+	}*/
+	public void play() throws PlayerException {
+	    if (this.getLength() > 0) {
+	        // Logic phát DVD cũ của bạn (In ra Console hoặc gọi cửa sổ)
+	        System.out.println("Playing DVD: " + this.getTitle());
+	        System.out.println("DVD length: " + this.getLength());
+	    } else {
+	        // Sử dụng System.err.println() theo đúng yêu cầu đề bài
+	        System.err.println("ERROR: DVD length is non-positive!");
+	        throw new PlayerException("ERROR: DVD length is non-positive!");
+	    }
+	}
 	
 }

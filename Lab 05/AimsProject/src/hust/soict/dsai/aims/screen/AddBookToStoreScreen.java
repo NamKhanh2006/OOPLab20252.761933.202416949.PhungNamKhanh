@@ -12,15 +12,17 @@ public class AddBookToStoreScreen extends AddItemToStoreScreen {
 
     @Override
     protected void addCustomFields() {
-        // No extra custom properties required outside base variables
+        // Lớp Book không cần thêm thuộc tính đặc thù nào khác ngoài các thuộc tính cơ bản
     }
 
     @Override
     protected void handleSubmit() throws Exception {
+        int id = Integer.parseInt(tfId.getText());
         String title = tfTitle.getText();
         String category = tfCategory.getText();
         float cost = Float.parseFloat(tfCost.getText());
         
+        // Khởi tạo thực thể Book và nạp vào kho lưu trữ
         Book book = new Book(title, category, cost);
         this.store.addMedia(book);
     }

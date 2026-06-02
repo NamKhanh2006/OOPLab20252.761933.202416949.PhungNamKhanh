@@ -1,0 +1,47 @@
+Question:
+Part 1.3
+Programming with AWT and Swing is quite similar (similar elements including container/components, 
+event-handling). However, there are some differences that you need to note: 
+o The top-level containers in Swing and AWT 
+o The class name of components in AWT and corresponding class’s name in Swing
+
+Answer:
+1. Top-Level Containers in Swing vs. AWT
+A top-level container serves as the root window that holds all other GUI components. The way they manage their internal content layers differs significantly:
+- AWT (Frame, Window, Dialog): You can add components directly to the frame using the simple add() method (e.g., this.add(button);).
+- Swing (JFrame, JWindow, JDialog): Swing windows are structurally more complex. They contain multiple layers, including a root pane, a layered pane, and a content pane.
+Note: As we saw in our SwingAccumulator code, we must fetch the content pane using getContentPane() and change its layout or add elements to that pane (cp.add(...)), rather than interacting with the window directly.
+
+2. Naming Conventions: Class Names
+Swing components were designed to directly replace or upgrade existing AWT components. To distinguish them, Swing components are prefixed with a capital J, while standard AWT component classes lack this prefix.
+
+Summary:
+When comparing the two systems, keep these three structural differences in mind:
+Package Namespace: AWT classes belong to the java.awt.* package, while Swing classes belong to the extension package javax.swing.*.
+Look and Feel: AWT elements look different depending on whether you run the app on Windows, macOS, or Linux because they use native OS peers. Swing elements use Java to draw components, ensuring a consistent appearance across all platforms.
+Heavyweight vs. Lightweight: AWT components cannot easily be transparent and are always forced to render on top of Swing elements if you accidentally mix them in the same container.
+
+---------------------------------------------------------------------------
+Question:
+Part 14
+What happens when you don’t update for them to catch?
+Answer:
+When the play() methods are modified to throw a checked exception (such as PlayerException), the Java compiler enforces strict rules regarding how these exceptions are managed. If we do not update the Aims class to handle or declare them, the following things will happen:
+
+1. Compilation Error (The Code Will Not Compile)
+Since PlayerException is a Checked Exception (meaning it extends Exception directly, rather than RuntimeException), Java enforces a "Catch or Specify" requirement.
+
+If the Aims class calls media.play() or a helper method like playMedia(Media m) that executes the playback, Eclipse (or any Java compiler) will immediately trigger a red underline compilation error at that specific line:
+
+Unhandled exception type hust.soict.dsai.aims.exception.PlayerException
+
+Because of this, the compiler will refuse to generate the .class files, and you will not be able to run the program at all until the syntax is corrected.
+
+2. If it were a Runtime (Unchecked) Exception instead...
+Just to give a complete picture of how Java behaves: if PlayerException had been designed as an Unchecked Exception (inheriting from RuntimeException), the compiler would not force us to write a try-catch block.
+
+However, if an error occurred during playback at runtime (such as a song having a negative track length or a DVD missing critical stream attributes) and it wasn't caught, the following would happen:
+
+In a Console App: The program would crash immediately, print a stack trace to the terminal (System.err), and abruptly terminate the user's session.
+
+In a GUI App (Swing/JavaFX): The specific event handling thread (like the EDT) would dump the stack trace to the background terminal, leaving the visual application open but potentially freezing the interface or rendering it unstable.
