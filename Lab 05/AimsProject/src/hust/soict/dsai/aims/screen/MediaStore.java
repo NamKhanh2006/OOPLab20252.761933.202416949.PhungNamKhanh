@@ -104,6 +104,16 @@ public class MediaStore extends JPanel {
 
         // 1. Add to Cart Button & Event Handling
         JButton addToCartButton = new JButton("Add to cart");
+        addToCartButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                cart.addMedia(media); // Thêm sản phẩm vào cart chung
+                javax.swing.JOptionPane.showMessageDialog(null, 
+                    "Added '" + media.getTitle() + "' to cart successfully!", 
+                    "Cart Update", 
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         addToCartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

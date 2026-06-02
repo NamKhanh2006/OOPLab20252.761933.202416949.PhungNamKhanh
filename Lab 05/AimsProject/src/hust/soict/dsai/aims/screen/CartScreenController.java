@@ -93,10 +93,10 @@ import hust.soict.dsai.aims.media.DigitalVideoDisc;
 import hust.soict.dsai.aims.media.Media;
 import hust.soict.dsai.aims.media.Playable;
 import hust.soict.dsai.aims.media.Track;
+import hust.soict.dsai.aims.store.Store;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ListChangeListener.Change;
 import javafx.collections.transformation.FilteredList; // Required for wrapping the list
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -112,6 +112,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 public class CartScreenController {
     
+	private Store store;
     private Cart cart;
     
     // Create a FilteredList wrapper that sits on top of our original cart items
@@ -132,8 +133,9 @@ public class CartScreenController {
     @FXML
     private Label lblTotalCost; // Binds to fx:id="lblTotalCost"
     
-    public CartScreenController(Cart cart) {
+    public CartScreenController(Store store, Cart cart) {
         super();
+        this.store = store;
         this.cart = cart;
     }
     

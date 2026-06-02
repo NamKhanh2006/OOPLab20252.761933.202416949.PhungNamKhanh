@@ -36,17 +36,41 @@ public class StoreScreen extends JFrame {
 	}
 	
 	JMenuBar createMenuBar() {
-		
 		JMenu menu = new JMenu("Options");
-		
 		JMenu smUpdateStore = new JMenu("Update Store");
-		smUpdateStore.add(new JMenuItem("Add Book"));
-		smUpdateStore.add(new JMenuItem("Add CD"));
-		smUpdateStore.add(new JMenuItem("Add DVD"));
 		
+		JMenuItem addBook = new JMenuItem("Add Book");
+		addBook.addActionListener(e -> {
+			new AddBookToStoreScreen(this.store, this.cart);
+			this.dispose();
+		});
+		
+		JMenuItem addCD = new JMenuItem("Add CD");
+		addCD.addActionListener(e -> {
+			new AddCompactDiscToStoreScreen(this.store, this.cart);
+			this.dispose();
+		});
+		
+		JMenuItem addDVD = new JMenuItem("Add DVD");
+		addDVD.addActionListener(e -> {
+			new AddDigitalVideoDiscToStoreScreen(this.store, this.cart);
+			this.dispose();
+		});
+		
+		smUpdateStore.add(addBook);
+		smUpdateStore.add(addCD);
+		smUpdateStore.add(addDVD);
 		menu.add(smUpdateStore);
-		menu.add(new JMenuItem("View store"));
-		menu.add(new JMenuItem("View cart"));
+		
+		JMenuItem viewStore = new JMenuItem("View store");
+		menu.add(viewStore);
+		
+		JMenuItem viewCart = new JMenuItem("View cart");
+		viewCart.addActionListener(e -> {
+			new CartScreen(this.store, this.cart);
+			this.dispose();
+		});
+		menu.add(viewCart);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -56,7 +80,6 @@ public class StoreScreen extends JFrame {
 	}
 	
 	JPanel createHeader() {
-		
 		JPanel header = new JPanel();
 		header.setLayout(new BoxLayout(header, BoxLayout.X_AXIS));
 		
@@ -64,21 +87,24 @@ public class StoreScreen extends JFrame {
 		title.setFont(new Font(title.getFont().getName(), Font.PLAIN, 50));
 		title.setForeground(Color.CYAN);
 		
-		JButton cart = new JButton("View cart");
-		cart.setPreferredSize(new Dimension(100, 50));
-		cart.setMaximumSize(new Dimension(100, 50));
+		JButton btnCart = new JButton("View cart");
+		btnCart.setPreferredSize(new Dimension(100, 50));
+		btnCart.setMaximumSize(new Dimension(100, 50));
+		btnCart.addActionListener(e -> {
+			new CartScreen(this.store, this.cart);
+			this.dispose();
+		});
 		
 		header.add(Box.createRigidArea(new Dimension(10, 10)));
 		header.add(title);
 		header.add(Box.createHorizontalGlue());
-		header.add(cart);
+		header.add(btnCart);
 		header.add(Box.createRigidArea(new Dimension (10,10)));
 		
 		return header;
 	}
 	
 	JPanel createCenter() {
-		
 		JPanel center = new JPanel();
 		center.setLayout(new GridLayout(3, 3, 2, 2));
 		
@@ -94,6 +120,7 @@ public class StoreScreen extends JFrame {
 	}
 	
 	public StoreScreen(Store store, Cart cart) {
+		// SỬA LỖI TẠI ĐÂY: Gán trực tiếp giá trị tham chiếu được truyền vào
 		this.store = store;
 		this.cart = cart;
 		
@@ -106,7 +133,7 @@ public class StoreScreen extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Store");
 		setSize(1024, 768);
+		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-
 }
