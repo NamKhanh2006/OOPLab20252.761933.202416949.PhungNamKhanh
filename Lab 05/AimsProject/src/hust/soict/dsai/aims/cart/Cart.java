@@ -1,8 +1,8 @@
 package hust.soict.dsai.aims.cart;
 
-import java.util.ArrayList;
 import java.util.Collections;
 
+import hust.soict.dsai.aims.exception.LimitExceededException;
 import hust.soict.dsai.aims.media.DigitalVideoDisc;
 import hust.soict.dsai.aims.media.Media;
 import javafx.collections.FXCollections;
@@ -26,6 +26,10 @@ public class Cart {
     }
     
     public void addMedia(Media newMedia) {
+    	if (this.itemsOrdered.size() >= 20) {
+            throw new LimitExceededException("ERROR: The cart is full! Cannot add: " + newMedia.getTitle());
+        }
+    	
     	if (itemsOrdered.contains(newMedia)) {
     		System.out.println("The media item '" + newMedia.getTitle() + "' is already in the cart!");
     	}
